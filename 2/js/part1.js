@@ -1,9 +1,9 @@
 const fs = require('fs');
 
 const instructionToMotions = {
-  'forward': d => ([d, 0]),
-  'up': d => ([0, -d]),
-  'down': d => ([0, d]),
+  'forward': (x, h, d) => ([h + x, d]),
+  'up': (x, h, d) => ([h, d - x]),
+  'down': (x, h, d) => ([h, d + x]),
 };
 
 fs.readFile(process.argv[2], 'utf-8', (err, data) => {
@@ -11,8 +11,7 @@ fs.readFile(process.argv[2], 'utf-8', (err, data) => {
     data.split("\n")
       .map(s => s.split(' '))
       .map(([instruction, s]) => ([instruction, parseInt(s)]))
-      .map(([instruction, d]) => instructionToMotions[instruction](d))
-      .reduce(([h, d], [horizontal, depth]) => ([h + horizontal, d + depth]), [0, 0])
+      .reduce(([h, d], [instruction, x]) => instructionToMotions[instruction](x, h, d), [0, 0])
       .reduce((acc, n) => acc * n, 1)
   );
 });
